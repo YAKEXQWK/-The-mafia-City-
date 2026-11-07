@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>City Plan Mafia - Synthwave Edition</title>
+    <style>
+        :root {
+            --gold: #ffd700;
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff007f;
+            --neon-purple: #9d00ff;
+            --dark-bg: #05020a;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* FONDO PRINCIPAL ESTILO SYNTHWAVE / TROPICAL NOCTURNO */
+        .main-container {
+            width: 100vw;
+            max-width: 480px;
+            height: 100vh;
+            max-height: 900px;
+            position: relative;
+            background: linear-gradient(to bottom, #120024 0%, #3a0ca3 30%, #f72585 55%, #7209b7 75%, #03071e 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            box-shadow: 0 0 40px rgba(247, 37, 133, 0.4);
+            overflow-y: auto;
+        }
+
+        /* Elementos Decorativos de Fondo */
+        .sun-synthwave {
+            position: absolute;
+            top: 32%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 130px; height: 130px;
+            background: linear-gradient(to bottom, #ff9e00, #ff0054);
+            border-radius: 50%;
+            box-shadow: 0 0 50px #ff007f;
+            z-index: 1;
+        }
+        /* Líneas horizontales retro en el sol */
+        .sun-synthwave::after {
+            content: '';
+            position: absolute;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(to bottom, transparent, transparent 10px, #120024 10px, #120024 14px);
+            border-radius: 50%;
+            opacity: 0.6;
+        }
+
+        .city-silhouette {
+            position: absolute;
+            bottom: 20%; left: 0; width: 100%; height: 140px;
+            background: repeating-linear-gradient(90deg, #02040a 0px, #02040a 12px, transparent 12px, transparent 16px, #080c1d 16px, #080c1d 30px);
+            opacity: 0.9;
+            z-index: 2;
+        }
+        .city-windows {
+            position: absolute;
+            bottom: 20%; left: 0; width: 100%; height: 140px;
+            background-image: radial-gradient(var(--neon-blue) 30%, transparent 40%), radial-gradient(var(--gold) 30%, transparent 40%);
+            background-size: 15px 15px;
+            background-position: 0 0, 8px 8px;
+            opacity: 0.5;
+            z-index: 2;
+        }
+
+        .sea-horizon {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 20%;
+            background: linear-gradient(to bottom, #03071e, #000814);
+            border-top: 3px solid var(--neon-pink);
+            z-index: 2;
+        }
+
+        .palms-container {
+            position: absolute;
+            bottom: 5%; width: 100%; display: flex; justify-content: space-between;
+            padding: 0 10px; font-size: 65px; opacity: 0.85; filter: drop-shadow(0 0 8px #000);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* HEADER DE ESTADO */
+        .header-status {
+            position: relative; z-index: 10;
+            width: 100%; background: rgba(5, 2, 12, 0.85);
+            border: 2px solid var(--neon-blue); border-radius: 12px;
+            padding: 8px 12px; display: flex; justify-content: space-around;
+            align-items: center; box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+        }
+        .stat-item { display: flex; align-items: center; gap: 5px; font-weight: bold; font-size: 14px; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+
+        .event-title {
+            position: relative; z-index: 10; margin-top: 5px;
+            font-size: 26px; font-weight: 900; text-align: center;
+            letter-spacing: 2px; color: #fff;
+            text-shadow: 0 0 10px var(--neon-pink), 0 0 25px var(--neon-purple);
+            text-transform: uppercase;
+        }
+
+        .global-timer {
+            position: relative; z-index: 10; font-size: 11px; color: #ffeb3b;
+            background: rgba(0,0,0,0.7); padding: 4px 12px; border-radius: 20px;
+            border: 1px solid #ffeb3b; box-shadow: 0 0 8px rgba(255,235,59,0.3);
+        }
+
+        /* MENÚ PRINCIPAL 9 BOTONES */
+        .menu-grid {
+            position: relative; z-index: 10; width: 100%;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+            margin: 8px 0;
+        }
+
+        .menu-btn {
+            background: rgba(18, 5, 36, 0.9);
+            border: 2px solid var(--neon-purple);
+            border-radius: 14px; padding: 10px 4px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 5px; cursor: pointer; transition: transform 0.15s, border-color 0.15s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+        }
+        .menu-btn:active { transform: scale(0.95); }
+        .menu-btn .icon { font-size: 30px; filter: drop-shadow(0 0 6px rgba(255,255,255,0.6)); }
+        .menu-btn .label { font-size: 10px; font-weight: bold; text-transform: uppercase; text-align: center; }
+
+        .btn-games { border-color: var(--neon-blue); background: linear-gradient(135deg, #091b36, #1a0b36); }
+        .btn-tasks { border-color: #2e7d32; }
+        .btn-shop { border-color: var(--gold); background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, rgba(18,5,36,0.9) 70%); }
+        .btn-profile { border-color: #e91e63; }
+        .btn-calendar { border-color: #ff9800; }
+        .btn-codes { border-color: #00ff66; background: linear-gradient(180deg, rgba(0,255,102,0.15), rgba(0,0,0,0.9)); }
+        .btn-vault { border-color: #00bcd4; }
+        .btn-bar { border-color: var(--neon-pink); animation: pulseGlow 2s infinite alternate; }
+        .btn-pass { border-color: var(--gold); }
+        .btn-event { border-color: #ff3d00; background: linear-gradient(45deg, #bf360c, #3e2723); }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 5px var(--neon-pink); }
+            100% { box-shadow: 0 0 18px var(--neon-blue), 0 0 10px var(--neon-pink); }
+        }
+
+        /* MODALES */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(5, 2, 15, 0.96); z-index: 100;
+            flex-direction: column; align-items: center; justify-content: flex-start;
+            padding: 15px; overflow-y: auto; box-sizing: border-box;
+        }
+        .modal-active { display: flex; }
+
+        .modal-header {
+            width: 100%; max-width: 440px; display: flex; justify-content: space-between;
+            align-items: center; padding-bottom: 10px; border-bottom: 2px solid var(--neon-blue);
+            margin-bottom: 12px;
+        }
+        .modal-title { font-size: 18px; font-weight: bold; color: var(--gold); }
+        .close-btn {
+            background: #ff1744; border: none; color: white; padding: 5px 12px;
+            border-radius: 6px; font-weight: bold; cursor: pointer;
+        }
+
+        .modal-body { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 10px; }
+
+        .btn-action {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            border: none; color: white; padding: 8px 14px; border-radius: 8px;
+            font-weight: bold; cursor: pointer; text-align: center; text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); font-size: 12px;
+        }
+        .btn-action:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .card-box {
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 6px;
+        }
+
+        .game-canvas-area {
+            width: 100%; height: 240px; background: #0a0518; border: 2px solid var(--neon-blue);
+            border-radius: 10px; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- Elementos de Fondo Synthwave / Tropical -->
+        <div class="sun-synthwave"></div>
+        <div class="city-silhouette"></div>
+        <div class="city-windows"></div>
+        <div class="sea-horizon"></div>
+        <div class="palms-container"><span>🌴</span><span>🌴</span></div>
+
+        <!-- Encabezado de Estado -->
+        <div class="header-status">
+            <div class="stat-item">💵 <span id="val-cash">0</span></div>
+            <div class="stat-item">🪙 <span id="val-gold">0</span></div>
+            <div class="stat-item">🎟️ <span id="val-tickets">0</span></div>
+            <div class="stat-item">🔑 <span id="val-keys">0</span></div>
+        </div>
+
+        <div>
+            <div class="event-title">City Plan Mafia</div>
+            <div class="global-timer" id="timer-global-168h">⏳ Evento expira en: --:--:--</div>
+        </div>
+
+        <!-- Menú de 9 Botones Principal -->
+        <div class="menu-grid">
+            <div class="menu-btn btn-games" onclick="openModal('modal-games')">
+                <span class="icon">🎮</span>
+                <span class="label">Minijuegos</span>
+            </div>
+            <div class="menu-btn btn-tasks" onclick="openModal('modal-tasks')">
+                <span class="icon">📝</span>
+                <span class="label">Misiones</span>
+            </div>
+            <div class="menu-btn btn-shop" onclick="openModal('modal-shop')">
+                <span class="icon">💵</span>
+                <span class="label">Tienda</span>
+            </div>
+            <div class="menu-btn btn-profile" onclick="openModal('modal-profile')">
+                <span class="icon">👤</span>
+                <span class="label">Perfil</span>
+            </div>
+            <div class="menu-btn btn-calendar" onclick="openModal('modal-calendar')">
+                <span class="icon">🗓️</span>
+                <span class="label">Calendario</span>
+            </div>
+            <div class="menu-btn btn-codes" onclick="openModal('modal-codes')">
+                <span class="icon">💻</span>
+                <span class="label">Códigos</span>
+            </div>
+            <div class="menu-btn btn-vault" onclick="openModal('modal-vault')">
+                <span class="icon">💰</span>
+                <span class="label">Almacén</span>
+            </div>
+            <div class="menu-btn btn-bar" onclick="openModal('modal-bar')">
+                <span class="icon">🍾</span>
+                <span class="label">Bar</span>
+            </div>
+            <div class="menu-btn btn-pass" onclick="openModal('modal-pass')">
+                <span class="icon">🎫</span>
+                <span class="label">Pass</span>
+            </div>
+            <div class="menu-btn btn-event" id="btn-bank-event" style="display:none; grid-column: span 3;" onclick="openModal('modal-bank')">
+                <span class="icon">🏦</span>
+                <span class="label">Evento Banco (Día 3)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODALES ==================== -->
+
+    <!-- PERFIL -->
+    <div class="modal" id="modal-profile">
+        <div class="modal-header">
+            <div class="modal-title">👤 Perfil & Estadísticas</div>
+            <button class="close-btn" onclick="closeModal('modal-profile')">X</button>
+        </div>
+        <div class="modal-body">
+            <div class="card-box" id="profile-stats-content"></div>
+            <div class="card-box">
+                <h4>📜 Historial de Cajas Fuertes</h4>
+                <div id="profile-vault-rewards" style="font-size: 11px; color: #bbb; max-height: 140px; overflow-y: auto;">Sin registro.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MINIJUEGOS -->
+    <div class="modal" id="modal-games">
+        <div class="modal-header">
+            <div class="modal-title">🎮 Zona de Minijuegos</div>
+            <button class="close-btn" onclick="closeModal('modal-games')">X</button>
+        </div>
+        <div class="modal-body">
+            <div class="global-timer" id="timer-mg-reset">⏳ Siguiente ciclo en: 02:30:00</div>
+            <div class="card-box" id="game-card-1">
+                <h4>1- Elimina a la policía! 👮</h4>
+                <button class="btn-action" id="btn-g-1" onclick="startGame1()">Jugar 🎮</button>
+            </div>
+            <div class="card-box" id="game-card-2">
+                <h4>2- Atender a la Tienda 🍕</h4>
+                <button class="btn-action" id="btn-g-2" onclick="startGame2()">Jugar 🎮</button>
+            </div>
+            <div class="card-box" id="game-card-3">
+                <h4>3- Barista Mafia 🍺</h4>
+                <button class="btn-action" id="btn-g-3" onclick="startGame3()">Jugar 🎮</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal-game-runner">
+        <div class="modal-header">
+            <div class="modal-title" id="game-runner-title">Minijuego</div>
+            <button class="close-btn" onclick="abortGame()">Salir</button>
+        </div>
+        <div class="modal-body" id="game-runner-body"></div>
+    </div>
+
+    <!-- ALMACÉN -->
+    <div class="modal" id="modal-vault">
+        <div class="modal-header">
+            <div class="modal-title">💰 Almacén de Cajas</div>
+            <button class="close-btn" onclick="closeModal('modal-vault')">X</button>
+        </div>
+        <div class="modal-body">
+            <div class="card-box" style="text-align: center;">
+                <p>Fichas: <b id="vault-tickets-count">0</b> 🎟️</p>
+                <button class="btn-action" style="margin-top: 4px;" onclick="exchangeTicketsForVault()">Canjear 6 Fichas</button>
+            </div>
+            <div class="card-box">
+                <h4>Espacios (<span id="vault-slots-used">0</span>/<span id="vault-slots-max">2</span>)</h4>
+                <div id="vault-slots-container" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MISIONES -->
+    <div class="modal" id="modal-tasks">
+        <div class="modal-header">
+            <div class="modal-title">📝 Misiones Diarias</div>
+            <button class="close-btn" onclick="closeModal('modal-tasks')">X</button>
+        </div>
+        <div class="modal-body">
+            <div class="global-timer" id="timer-tasks">⏳ Reinicio de misiones en: 20:00:00</div>
+            <div class="card-box">
+                <p><b>1. Juega 2 minijuegos</b> (1 Ficha 🎟️)</p>
+                <button class="btn-action" id="btn-task-1" onclick="claimTask(1)">Reclamar</button>
+            </div>
+            <div class="card-box">
+                <p><b>2. Juega 1 minijuego</b> (1 Moneda 🪙)</p>
+                <button class="btn-action" id="btn-task-2" onclick="claimTask(2)">Reclamar</button>
+            </div>
+            <div class="card-box">
+                <p><b>3. Juega 3 minijuegos</b> (Caja / Llave 🔑)</p>
+                <button class="btn-action" id="btn-task-3" onclick="claimTask(3)">Reclamar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TIENDA -->
+    <div class="modal" id="modal-shop">
+        <div class="modal-header">
+            <div class="modal-title">💵 Tienda Mafia</div>
+            <button class="close-btn" onclick="closeModal('modal-shop')">X</button>
+        </div>
+        <div class="modal-body">
+            <div class="card-box">
+                <p><b>Mejorar Almacén (+1 Espacio)</b> - $9,000 (Máx 5)</p>
+                <button class="btn-action" onclick="buyShopUpgrade()">Comprar</button>
+            </div>
+            <div class="card-box">
+                <p><b>Comprar Caja Fuerte</b> - $17,000</p>
+                <button class="btn-action" onclick="buyShopVault()">Comprar</button>
+            </div>
+            <div class="card-box">
+                <p><b>Comprar Llave 🔑</b> - $800</p>
+                <button class="btn-action" onclick="buyShopKey()">Comprar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CALENDARIO -->
+    <div class="modal" id="modal-calendar">
+        <div class="modal-header">
+            <div class="modal-title">🗓️ Calendario Diario</div>
+            <button class="close-btn" onclick="closeModal('modal-calendar')">X</button>
+        </div>
+        <div class="modal-body">
+            <div class="global-timer" id="timer-calendar">⏳ Siguiente recompensa en: 20:00:00</div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;" id="calendar-grid"></div>
+        </div>
+    </div>
+
+    <!-- CÓDIGOS -->
+    <div class="modal" id="modal-codes">
+        <div class="modal-header">
+            <div class="modal-title">💻 Canjear Códigos</div>
+            <button class="close-btn" onclick="closeModal('modal-codes')">X</button>
+        </div>
+        <div class="modal-body">
+            <div class="card-box" style="border-color: #00ff66;">
+                <input type="text" id="input-promo-code" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #00ff66; background: #051008; color: #00ff66; text-align: center; margin-bottom: 8px;" placeholder="CÓDIGO">
+                <button class="btn-action" onclick="submitPromoCode()">Canjear 🎁</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BAR -->
+    <div class="modal" id="modal-bar">
+        <div class="modal-header">
+            <div class="modal-title">🍾 Bar & Intercambios</div>
+            <button class="close-btn" onclick="closeModal('modal-bar')">X</button>
+        </div>
+        <div class="modal-body">
+            <div class="card-box" style="text-align: center;">
+                <p>Diamantes: <b id="bar-diamonds-count">0</b> 💎</p>
+            </div>
+            <div class="card-box" id="bar-exchange-panel" style="display: none;">
+                <p><b>🔃 Intercambio (2 Diamantes = 1 Caja)</b></p>
+                <button class="btn-action" onclick="exchangeDiamondsForVault()">Intercambiar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PASS -->
+    <div class="modal" id="modal-pass">
+        <div class="modal-header">
+            <div class="modal-title">🎫 Pass (Monedas: <span id="pass-gold-count">0</span> 🪙)</div>
+            <button class="close-btn" onclick="closeModal('modal-pass')">X</button>
+        </div>
+        <div class="modal-body">
+            <h4>Pase Estándar (5 Monedas 🪙)</h4>
+            <div class="card-box" id="pass-standard-list" style="max-height: 150px; overflow-y: auto;"></div>
+            <h4 style="margin-top: 6px;">Pase MAX</h4>
+            <div class="card-box" id="pass-max-list" style="max-height: 150px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- EVENTO BANCO -->
+    <div class="modal" id="modal-bank">
+        <div class="modal-header">
+            <div class="modal-title">🏦 Asalto al Banco</div>
+            <button class="close-btn" onclick="closeModal('modal-bank')">X</button>
+        </div>
+        <div class="modal-body">
+            <div class="card-box" style="text-align: center;">
+                <div style="font-size: 13px; color: var(--gold); margin: 4px 0;" id="bank-progress-text">0 / 2,500,000 Puntos</div>
+                <button class="btn-action" onclick="startBankGame()">Cruzar Calle & Robar 🏦</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================== LOGICA Y CORRECCIÓN DE REINICIOS ==================== -->
+    <script>
+        const CODES_SINGLE_VAULT = ["419KLP-vxd","735RQE-bms","281ZUT-jhf","904CWY-pkr","612DXM-tgb","158HVB-nyl","843FJS-wqe","396NPA-mzu","527TLR-ikc","670OQW-vjs","143EZB-xpr","985UHG-tld","316SMC-qya","802YKJ-fbn","459VLD-mew","721IXR-hzk","264PFT-usc","598WEN-qob","830GBQ-rzi","174JKS-vtm"];
+        const CODES_DOUBLE_VAULT = ["538BJT-fmk-r","914XQW-hpl-d","265LVR-jnc-s","781KMP-zdx-v","439HFD-tsg-b","602WZC-lqk-m","197RBN-xjm-p","843TGL-pwy-f","315MDS-vkr-c","674JFH-qzb-t","251ZPX-mhl-k","986VKY-ngw-d","420CHD-flt-r","719SQN-bpr-z","563FJW-tkc-m","892LPR-hvx-j","134KDT-zmj-s","647XMB-rqg-p","289WHF-npk-v","950ZJL-wdt-c","372RCF-ykb-l","518VMS-jdx-t","804HQX-fmp-r","461TNK-lgb-d","725JDP-zwr-k","193WCL-hmt-s","659BXR-pvc-f","382MFT-qdn-m","846KGH-vzl-j","217ZSW-rtb-p"];
+        const CODES_TRIPLE_VAULT = ["4192KLP-vxdsb#","7354RQE-bmsrq$","2819ZUT-jhfwt&","9041CWY-pkrmn=","6123DXM-tgblv(","1587HVB-nylkp)","8439FJS-wqext#","3962NPA-mzuyh$","5274TLR-ikcvb&","6705OQW-vjsnm=","1438EZB-xprld(","9851UHG-tldkq)","3164SMC-qyafb#","8026YKJ-fbnwr$","4592VLD-mewtp&","7214IXR-hzkdc=","2648PFT-uscvj(","5983WEN-qobml)","8305GBQ-rzitp#","1749JKS-vtmlk$","5382BJT-fmkrp&","9146XQW-hpldc=","2654LVR-jncsv(","7812KMP-zdxvt)","4398HFD-tsgbr#","6021WZC-lqkmw$","1975RBN-xjmpq&","8432TGL-pwyfc=","3158MDS-vkrcd(","6741JFH-qzbtv)"];
+        const CODES_CASH_15K = ["49201-Bkxyt-Mloq#*","83912-Plmqw-Zxcv$!","10485-Jhgfd-Rtyu&%","93847-Xswqa-Plkj@#","28475-Mnbvc-Poiu*$","71923-Asdfg-Hjkl%+","58302-Qazws-Xedc#&","39201-Edcrf-Vtgb@!","60492-Tgbnh-Yhnm*+","81029-Ujmik-Olop$%","47583-Plmok-Njiu&#","92018-Wsxza-Edcv@*","18392-Rfvtg-Byhn$%","30492-UjmiH-Nbgf+&","74829-Kloiu-Ytre#@","59201-Mnbvc-Xswq*!","83019-Plokm-Iuzh$%","20483-Asdfr-Tgyu&+#","61920-Qwert-Yuiop@!","94857-Zxcvb-Nmasd*$","10293-Poiuy-Trewq%+","48392-Lkjhg-Fdsa#&","75920-Mnvcx-Zasqw@*","39204-Bvfre-Dswqa$%","68392-Xswed-Cvfrt+&","81024-Plmko-Iujyh#@","29483-Qazws-Xedcr*!","50392-Edcrf-Vtgbm$%","71948-Yhnuj-Mikol&+#","93820-Wsxed-Cfrgb@!"];
+        const CODE_PASS_MAX = "4#Kp$9xR!2zM%q";
+
+        const VAULT_SPECIAL_ITEMS = [
+            { name: "huevo retro", prob: 30 }, { name: "huevo jubilado", prob: 40 }, { name: "huevo básico", prob: 60 },
+            { name: "huevo roto", prob: 50 }, { name: "huevo mascota", prob: 30 }, { name: "huevo extinto", prob: 35 },
+            { name: "huevo hada", prob: 65 }, { name: "caja 2D", prob: 10 }, { name: "regalo pequeño", prob: 70 },
+            { name: "regalo mediano", prob: 40 }, { name: "regalo grande", prob: 9 }, { name: "pocion bonus bucks", prob: 15 },
+            { name: "pocion XP bonus", prob: 15 }, { name: "pet periquito bruja", prob: 40 }, { name: "jerbo gelatinoso", prob: 20 },
+            { name: "galleta de Mochis!", prob: 1.3 }, { name: "tarro de miel", prob: 2.1 }, { name: "flor mariposa", prob: 1.1 },
+            { name: "caja de patitos", prob: 10 }, { name: "caja de bellotas", prob: 5 }, { name: "caja de conechocos", prob: 5 },
+            { name: "pocion R", prob: 0.1 }, { name: "50 Robux", prob: 0.8 }, { name: "huevo de cristal", prob: 0.2 },
+            { name: "stiker de halloween", prob: 83 }, { name: "maletin de fantasmas", prob: 1.6 }, { name: "stiker de halloween 2", prob: 84 }
+        ];
+
+        let state = {
+            cash: 0, goldCoins: 0, tickets: 0, keys: 0, diamonds: 0,
+            totalVaultsOpened: 0, totalGamesPlayed: 0, passMaxUnlocked: false,
+            claimedCodes: [], vaultHistory: [], maxVaultSlots: 2, shopUpgradesCount: 0, vaultSlots: [],
+            tasksPlayedCount: 0, tasksClaimed: [false, false, false],
+            currentCalendarDay: 1, bankPoints: 0,
+            claimedStandardPass: Array(10).fill(false), claimedMaxPass: Array(10).fill(false),
+            startTime: Date.now(),
+            // Timers de reinicio persistentes
+            nextGameResetTime: Date.now() + (2.5 * 3600 * 1000),
+            nextTasksResetTime: Date.now() + (20 * 3600 * 1000),
+            nextCalendarResetTime: Date.now() + (20 * 3600 * 1000)
+        };
+
+        window.addEventListener('load', () => {
+            let saved = localStorage.getItem('city_plan_mafia_synth_v2');
+            if (saved) { try { state = Object.assign(state, JSON.parse(saved)); } catch(e){} }
+            checkAndResetCycles();
+            updateUI();
+            startGlobalTimers();
+            renderVaultSlots();
+            renderCalendar();
+            renderPassUI();
+        });
+
+        function saveGame() {
+            localStorage.setItem('city_plan_mafia_synth_v2', JSON.stringify(state));
+            updateUI();
+        }
+
+        function checkAndResetCycles() {
+            let now = Date.now();
+            // Ciclo minijuegos (2.5 horas)
+            if (now >= state.nextGameResetTime) {
+                state.nextGameResetTime = now + (2.5 * 3600 * 1000);
+            }
+            // Ciclo misiones (20 horas)
+            if (now >= state.nextTasksResetTime) {
+                state.tasksPlayedCount = 0;
+                state.tasksClaimed = [false, false, false];
+                state.nextTasksResetTime = now + (20 * 3600 * 1000);
+            }
+            // Ciclo calendario (20 horas)
+            if (now >= state.nextCalendarResetTime) {
+                if (state.currentCalendarDay < 6) state.currentCalendarDay++;
+                state.nextCalendarResetTime = now + (20 * 3600 * 1000);
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('val-cash').innerText = state.cash;
+            document.getElementById('val-gold').innerText = state.goldCoins;
+            document.getElementById('val-tickets').innerText = state.tickets;
+            document.getElementById('val-keys').innerText = state.keys;
+            document.getElementById('vault-tickets-count').innerText = state.tickets;
+            document.getElementById('bar-diamonds-count').innerText = state.diamonds;
+            document.getElementById('pass-gold-count').innerText = state.goldCoins;
+            document.getElementById('bank-progress-text').innerText = state.bankPoints >= 2500000 ? "¡Alcancía Llena!" : `${state.bankPoints} / 2,500,000 Puntos`;
+
+            if (state.currentCalendarDay >= 3) document.getElementById('btn-bank-event').style.display = 'flex';
+            if (state.passMaxUnlocked) document.getElementById('bar-exchange-panel').style.display = 'block';
+
+            renderProfileStats();
+            renderGamesStatus();
+        }
+
+        function openModal(id) { document.getElementById(id).classList.add('modal-active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('modal-active'); }
+
+        function startGlobalTimers() {
+            setInterval(() => {
+                let now = Date.now();
+                checkAndResetCycles();
+
+                // 168h evento
+                let diff168 = (state.startTime + (168 * 3600 * 1000)) - now;
+                document.getElementById('timer-global-168h').innerText = diff168 <= 0 ? "⚠️ El tiempo terminó" : `⏳ Expira en: ${Math.floor(diff168/3600000)}h ${Math.floor((diff168%3600000)/60000)}m`;
+
+                // Minijuegos reset timer
+                let diffMg = state.nextGameResetTime - now;
+                document.getElementById('timer-mg-reset').innerText = `⏳ Ciclo de juegos: ${Math.floor(diffMg/3600000)}h ${Math.floor((diffMg%3600000)/60000)}m`;
+
+                // Misiones reset timer
+                let diffTasks = state.nextTasksResetTime - now;
+                document.getElementById('timer-tasks').innerText = `⏳ Reinicio: ${Math.floor(diffTasks/3600000)}h ${Math.floor((diffTasks%3600000)/60000)}m`;
+
+                // Calendario reset timer
+                let diffCal = state.nextCalendarResetTime - now;
+                document.getElementById('timer-calendar').innerText = `⏳ Siguiente día: ${Math.floor(diffCal/3600000)}h ${Math.floor((diffCal%3600000)/60000)}m`;
+
+                // Cajas fuertes
+                state.vaultSlots.forEach(slot => {
+                    if (slot && slot.unlocking && now >= slot.timerEnd) { slot.unlocking = false; slot.ready = true; }
+                });
+                renderVaultSlots();
+            }, 1000);
+        }
+
+        function renderGamesStatus() {
+            // Si el ciclo de juegos está activo, permite jugar
+            for (let i = 1; i <= 3; i++) {
+                let btn = document.getElementById(`btn-g-${i}`);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = "Jugar 🎮";
+                }
+            }
+        }
+
+        // CÓDIGOS
+        function submitPromoCode() {
+            let input = document.getElementById('input-promo-code').value.trim();
+            if (!input || state.claimedCodes.includes(input)) { alert("❌ Código inválido o ya canjeado."); return; }
+
+            let success = false;
+            if (CODES_SINGLE_VAULT.includes(input)) { addVaults(1); success = true; }
+            else if (CODES_DOUBLE_VAULT.includes(input)) { addVaults(2); success = true; }
+            else if (CODES_TRIPLE_VAULT.includes(input)) { addVaults(3); success = true; }
+            else if (CODES_CASH_15K.includes(input)) { state.cash += 15000; success = true; alert("🎉 +$15,000 en efectivo."); }
+            else if (input === CODE_PASS_MAX) { state.passMaxUnlocked = true; state.diamonds += 2; success = true; alert("🎉 ¡Pass MAX Desbloqueado!"); }
+
+            if (success) { state.claimedCodes.push(input); document.getElementById('input-promo-code').value = ""; saveGame(); }
+            else alert("❌ Código no reconocido.");
+        }
+
+        function addVaults(count) {
+            let added = 0;
+            for (let i = 0; i < count; i++) {
+                if (state.vaultSlots.length < state.maxVaultSlots) { state.vaultSlots.push({ unlocking: false, ready: false }); added++; }
+            }
+            alert(`🎉 ¡Recibiste ${added} cajas fuertes!`);
+            saveGame();
+        }
+
+        // ALMACÉN
+        function renderVaultSlots() {
+            let cont = document.getElementById('vault-slots-container');
+            document.getElementById('vault-slots-used').innerText = state.vaultSlots.length;
+            document.getElementById('vault-slots-max').innerText = state.maxVaultSlots;
+            cont.innerHTML = "";
+
+            state.vaultSlots.forEach((slot, index) => {
+                let div = document.createElement('div');
+                div.className = "card-box"; div.style.width = "47%"; div.style.textAlign = "center";
+                if (slot.ready) div.innerHTML = `<p>🧰 Lista!</p><button class="btn-action" onclick="openVault(${index})">Abrir 🎉</button>`;
+                else if (slot.unlocking) div.innerHTML = `<p>⏳ Abriendo... (${Math.max(0, Math.ceil((slot.timerEnd-Date.now())/1000))}s)</p>`;
+                else div.innerHTML = `<p>🧰 Cerrada</p><button class="btn-action" onclick="startVaultUnlock(${index})">Usar Llave 🔑</button>`;
+                cont.appendChild(div);
+            });
+        }
+
+        function startVaultUnlock(index) {
+            if (state.keys <= 0) { alert("❌ Necesitas 1 Llave 🔑."); return; }
+            state.keys--; state.vaultSlots[index].unlocking = true; state.vaultSlots[index].timerEnd = Date.now() + 180000;
+            saveGame();
+        }
+
+        function openVault(index) {
+            state.vaultSlots.splice(index, 1);
+            state.totalVaultsOpened++;
+            let wonCash = [400, 900, 1000, 800, 5000][Math.floor(Math.random()*5)];
+            state.cash += wonCash; state.goldCoins += 1;
+            let specialWon = VAULT_SPECIAL_ITEMS[Math.floor(Math.random()*VAULT_SPECIAL_ITEMS.length)].name;
+            state.vaultHistory.push(`Caja #${state.totalVaultsOpened}: +$${wonCash}, +1 🪙, ${specialWon}`);
+            alert(`🎉 ¡Caja Abierta!\n+$${wonCash} | +1 Moneda | Objeto: ${specialWon}`);
+            saveGame();
+        }
+
+        function exchangeTicketsForVault() {
+            if (state.tickets < 6) { alert("❌ Requiere 6 fichas 🎟️."); return; }
+            if (state.vaultSlots.length >= state.maxVaultSlots) { alert("❌ Almacén lleno."); return; }
+            state.tickets -= 6; addVaults(1);
+        }
+
+        function exchangeDiamondsForVault() {
+            if (state.diamonds < 2) { alert("❌ Requiere 2 Diamantes 💎."); return; }
+            if (state.vaultSlots.length >= state.maxVaultSlots) { alert("❌ Almacén lleno."); return; }
+            state.diamonds -= 2; addVaults(1);
+        }
+
+        // TIENDA
+        function buyShopUpgrade() {
+            if (state.shopUpgradesCount >= 5 || state.cash < 9000) { alert("❌ Límite alcanzado o fondos insuficientes."); return; }
+            state.cash -= 9000; state.shopUpgradesCount++; state.maxVaultSlots++; saveGame(); alert("🎉 ¡Espacio mejorado!");
+        }
+        function buyShopVault() {
+            if (state.cash < 17000 || state.vaultSlots.length >= state.maxVaultSlots) { alert("❌ Fondos insuficientes o almacén lleno."); return; }
+            state.cash -= 17000; addVaults(1);
+        }
+        function buyShopKey() {
+            if (state.cash < 800) { alert("❌ Fondos insuficientes."); return; }
+            state.cash -= 800; state.keys++; saveGame(); alert("🎉 ¡Llave comprada!");
+        }
+
+        // MISIONES
+        function claimTask(num) {
+            if (num === 1 && state.tasksPlayedCount >= 2 && !state.tasksClaimed[0]) { state.tickets += 1; state.tasksClaimed[0] = true; }
+            else if (num === 2 && state.tasksPlayedCount >= 1 && !state.tasksClaimed[1]) { state.goldCoins += 1; state.tasksClaimed[1] = true; }
+            else if (num === 3 && state.tasksPlayedCount >= 3 && !state.tasksClaimed[2]) {
+                if (state.vaultSlots.length < state.maxVaultSlots) addVaults(1); else state.keys += 1;
+                state.tasksClaimed[2] = true;
+            } else { alert("⚠️ Misión no completada o ya reclamada."); return; }
+            saveGame(); alert("🎉 ¡Recompensa de misión reclamada!");
+        }
+
+        // CALENDARIO
+        function renderCalendar() {
+            let grid = document.getElementById('calendar-grid');
+            grid.innerHTML = "";
+            for (let i = 1; i <= 6; i++) {
+                let btn = document.createElement('button');
+                btn.className = "btn-action"; btn.style.height = "60px";
+                if (i <= state.currentCalendarDay) {
+                    btn.innerHTML = `Día ${i}<br>🎁 Reclamar`;
+                    btn.onclick = () => { alert(`🎉 Recompensa Día ${i} obtenida!`); saveGame(); };
+                } else {
+                    btn.innerHTML = `Día ${i}<br>🔒`; btn.disabled = true;
+                }
+                grid.appendChild(btn);
+            }
+        }
+
+        // PERFIL
+        function renderProfileStats() {
+            document.getElementById('profile-stats-content').innerHTML = `
+                <p>📦 <b>Cajas Abiertas:</b> ${state.totalVaultsOpened}</p>
+                <p>🎮 <b>Minijuegos Jugados:</b> ${state.totalGamesPlayed}</p>
+                <p>🎫 <b>Pass MAX:</b> ${state.passMaxUnlocked ? 'Activo ✅' : 'Bloqueado 🔒'}</p>
+            `;
+            document.getElementById('profile-vault-rewards').innerHTML = state.vaultHistory.length ? state.vaultHistory.join('<br>') : 'Sin registro.';
+        }
+
+        // PASS
+        function renderPassUI() {
+            let stdList = document.getElementById('pass-standard-list');
+            let maxList = document.getElementById('pass-max-list');
+            stdList.innerHTML = ""; maxList.innerHTML = "";
+            
+            [1000, 2000, 3000, 5000, 2000, 4000, 2000, 6000, 1000, 9000].forEach((val, i) => {
+                let claimed = state.claimedStandardPass[i];
+                stdList.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:11px;"><span>Niv ${i+1}: $${val}</span><button class="btn-action" ${claimed||state.goldCoins<5?'disabled':''} onclick="claimStd(${i},${val})">${claimed?'Ok':'5🪙'}</button></div>`;
+            });
+            ["Caja bellota", "Caja conechoco", "Maletin", "3 Monedas", "$10k", "Bellotas", "5 Huevos", "Maletin", "$18k", "$38k"].forEach((name, i) => {
+                let claimed = state.claimedMaxPass[i];
+                maxList.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:11px;"><span>Niv ${i+1}: ${name}</span><button class="btn-action" ${!state.passMaxUnlocked||claimed||state.goldCoins<5?'disabled':''} onclick="claimMax(${i})">${claimed?'Ok':'5🪙'}</button></div>`;
+            });
+        }
+        function claimStd(i, val) { if(state.goldCoins>=5){ state.goldCoins-=5; state.cash+=val; state.claimedStandardPass[i]=true; saveGame(); renderPassUI(); } }
+        function claimMax(i) { if(state.goldCoins>=5 && state.passMaxUnlocked){ state.goldCoins-=5; state.claimedMaxPass[i]=true; saveGame(); renderPassUI(); } }
+
+        // MINIJUEGOS (FUNCIONALES)
+        let gameTimer = null;
+        function abortGame() { if (gameTimer) clearInterval(gameTimer); closeModal('modal-game-runner'); }
+        function finishGameWin(t, g, c) {
+            state.tickets += t; state.goldCoins += g; state.cash += c;
+            state.totalGamesPlayed++; state.tasksPlayedCount++;
+            saveGame(); alert(`🎉 ¡Victoria!\n+${t} Ficha | +${g} Moneda | +$${c}`); abortGame();
+        }
+
+        function startGame1() {
+            openModal('modal-game-runner');
+            let body = document.getElementById('game-runner-body');
+            let pts = 0, hp = 4, t = 60;
+            body.innerHTML = `<div>Puntos: <b id="g1-p">0</b>/300 | Vidas: <b id="g1-h">4</b></div><div class="game-canvas-area" id="g1-c"></div>`;
+            let c = document.getElementById('g1-c');
+            gameTimer = setInterval(() => {
+                t--; if (t <= 0 || hp <= 0) { clearInterval(gameTimer); if(pts>=300) finishGameWin(0.5, 1, 0); else { alert("❌ Derrota."); abortGame(); } }
+                if(Math.random()<0.5) {
+                    let isCop = Math.random()<0.4;
+                    let el = document.createElement('div'); el.style.position='absolute'; el.style.fontSize='35px'; el.style.cursor='pointer';
+                    el.style.top = Math.random()*180+'px'; el.style.left = Math.random()*360+'px'; el.innerText = isCop ? '👮' : '🚶';
+                    el.onclick = () => { if(isCop){ pts+=50; document.getElementById('g1-p').innerText=pts; } else { hp--; document.getElementById('g1-h').innerText=hp; } el.remove(); };
+                    c.appendChild(el); setTimeout(()=>el.remove(), 1500);
+                }
+            }, 1000);
+        }
+
+        function startGame2() {
+            openModal('modal-game-runner');
+            let body = document.getElementById('game-runner-body');
+            let served = 0;
+            body.innerHTML = `<div>Atendidos: <b id="g2-s">0</b>/10</div><div class="game-canvas-area" style="font-size:30px;">🍕 + 💊 + 🧃</div><button class="btn-action" onclick="finishGameWin(0.5, 1, 0)">Entregar Pedido 🍔</button>`;
+        }
+
+        function startGame3() {
+            openModal('modal-game-runner');
+            let body = document.getElementById('game-runner-body');
+            body.innerHTML = `<div>Sirviendo tragos...</div><div class="game-canvas-area" style="font-size:30px;">🍺 / 💊</div><button class="btn-action" onclick="finishGameWin(0.5, 1, 3000)">Repartir Lote 🍻</button>`;
+        }
+
+        function startBankGame() {
+            openModal('modal-game-runner');
+            document.getElementById('game-runner-body').innerHTML = `<div>Asaltando banco...</div><div class="game-canvas-area">🏦</div><button class="btn-action" onclick="state.bankPoints+=500000; state.cash+=33; saveGame(); alert('+500k Puntos'); abortGame();">Depositar Botín 💵</button>`;
+        }
+    </script>
+</body>
+</html>
